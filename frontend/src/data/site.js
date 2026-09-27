@@ -1,3 +1,13 @@
+import {
+  ToggleLeft,
+  Cable,
+  Lightbulb,
+  CircuitBoard,
+  Wrench,
+  Settings,
+  Package,
+} from "lucide-react";
+
 export const site = {
   name: "Ramdev Udhyog & Hardware",
   owner: "Laxman Patel",
@@ -19,13 +29,48 @@ export const brands = [
 ];
 
 export const categories = [
-  { name: "Switches & Sockets", icon: "◉" },
-  { name: "Wires & Cables", icon: "≋" },
-  { name: "LED Lights", icon: "✦" },
-  { name: "MCB & DB", icon: "▣" },
-  { name: "Conduits & Fittings", icon: "⌁" },
-  { name: "Tools & Accessories", icon: "⚒" },
-  { name: "Hardware Items", icon: "⌂" },
+  {
+    name: "Switches & Sockets",
+    icon: ToggleLeft,
+    color: "#f97316",
+    bg: "#fff7ed",
+  },
+  {
+    name: "Wires & Cables",
+    icon: Cable,
+    color: "#2563eb",
+    bg: "#eff6ff",
+  },
+  {
+    name: "LED Lights",
+    icon: Lightbulb,
+    color: "#eab308",
+    bg: "#fefce8",
+  },
+  {
+    name: "MCB & DB",
+    icon: CircuitBoard,
+    color: "#7c3aed",
+    bg: "#f5f3ff",
+  },
+  {
+    name: "Conduits & Fittings",
+    icon: Settings,
+    color: "#0891b2",
+    bg: "#ecfeff",
+  },
+  {
+    name: "Tools & Accessories",
+    icon: Wrench,
+    color: "#dc2626",
+    bg: "#fef2f2",
+  },
+  {
+    name: "Hardware Items",
+    icon: Package,
+    color: "#059669",
+    bg: "#ecfdf5",
+  },
 ];
 
 export const gallery = [

@@ -1,199 +1,162 @@
 import React, { useEffect, useState } from "react";
 import {
-  ChevronLeft,
-  ChevronRight,
+  ArrowLeft,
+  ArrowRight,
   Zap,
-  Wrench,
-  Link as LinkIcon,
-  Droplets,
   ShieldCheck,
+  Wrench,
+  Cable,
+  Settings,
 } from "lucide-react";
 
 import sliderImage from "../asserts/images/slider_img.png";
 
 const slides = [
   {
-    image: sliderImage,
     icon: Zap,
     eyebrow: "Electrical Components & Wiring",
     title: "Electrical Products",
     highlight: "& Wiring Essentials",
-    description:
-      "Electrical wires, circuit breakers, wall switches, outlets, extension cords, electrical tape, connectors, conduit pipes and junction boxes.",
+    text: "Electrical wires, circuit breakers, wall switches, outlets, extension cords, electrical tape, connectors, conduit pipes and junction boxes.",
   },
   {
-    image: sliderImage,
-    icon: LinkIcon,
+    icon: Settings,
     eyebrow: "Fasteners & Connectors",
-    title: "Strong Fasteners",
-    highlight: "For Every Job",
-    description:
-      "Wood screws, machine bolts, hex nuts, flat washers, wall anchors, common nails and cable ties for everyday fixing and construction work.",
+    title: "Strong & Reliable",
+    highlight: "Fastening Solutions",
+    text: "Wood screws, machine bolts, hex nuts, flat washers, wall anchors, nails, cable ties and other essential hardware.",
   },
   {
-    image: sliderImage,
     icon: Wrench,
     eyebrow: "Hand Tools",
-    title: "Essential Hand Tools",
-    highlight: "For Everyday Work",
-    description:
-      "Wire strippers, screwdrivers, linesman pliers, tape measures, claw hammers, utility knives and adjustable wrenches.",
+    title: "Tools For Every",
+    highlight: "Everyday Job",
+    text: "Wire strippers, screwdrivers, pliers, tape measures, claw hammers, utility knives and adjustable wrenches.",
   },
   {
-    image: sliderImage,
-    icon: Droplets,
-    eyebrow: "Plumbing & Structural Hardware",
-    title: "Pipes, Fittings",
-    highlight: "& Hardware",
-    description:
-      "Teflon tape, PVC pipes, hose clamps, door hinges, padlocks and sandpaper for plumbing, maintenance and structural work.",
+    icon: Cable,
+    eyebrow: "Plumbing & Hardware",
+    title: "Practical Products",
+    highlight: "For Every Project",
+    text: "Teflon tape, PVC pipes, hose clamps, door hinges, padlocks, sandpaper and essential structural hardware.",
   },
   {
-    image: sliderImage,
     icon: ShieldCheck,
     eyebrow: "Ramdev Udhyog & Hardware",
-    title: "Hardware & Electrical",
+    title: "Quality Products",
     highlight: "Under One Roof",
-    description:
-      "From wires and switches to tools, fasteners, pipes, fittings and everyday hardware essentials — all in one place.",
+    text: "Electrical and hardware products from trusted brands for homes, shops, repairs and project requirements.",
   },
 ];
 
 export default function Hero() {
-  const [current, setCurrent] = useState(0);
-  const [isPaused, setIsPaused] = useState(false);
+  const [active, setActive] = useState(0);
 
   useEffect(() => {
-    if (isPaused) return;
-
-    const timer = setInterval(() => {
-      setCurrent((prev) => (prev + 1) % slides.length);
+    const timer = window.setInterval(() => {
+      setActive((current) => (current + 1) % slides.length);
     }, 5000);
 
-    return () => clearInterval(timer);
-  }, [isPaused]);
-
-  const nextSlide = () => {
-    setCurrent((prev) => (prev + 1) % slides.length);
-  };
+    return () => {
+      window.clearInterval(timer);
+    };
+  }, []);
 
   const previousSlide = () => {
-    setCurrent(
-      (prev) => (prev - 1 + slides.length) % slides.length
+    setActive((current) =>
+      current === 0 ? slides.length - 1 : current - 1
     );
   };
 
-  const slide = slides[current];
-  const Icon = slide.icon;
+  const nextSlide = () => {
+    setActive((current) => (current + 1) % slides.length);
+  };
+
+  const currentSlide = slides[active];
+  const Icon = currentSlide.icon;
 
   return (
-    <section
-      className="relative isolate min-h-[620px] overflow-hidden bg-[#063f42] sm:min-h-screen"
-      onMouseEnter={() => setIsPaused(true)}
-      onMouseLeave={() => setIsPaused(false)}
-    >
-      {slides.map((item, index) => (
+    <section className="relative w-full max-w-full overflow-hidden bg-[#063f42] text-white">
+      <div className="relative h-[680px] w-full max-w-full overflow-hidden sm:h-[720px] lg:h-[760px]">
         <img
-          key={index}
-          src={item.image}
-          alt=""
-          aria-hidden="true"
-          className={`absolute inset-0 -z-30 h-full w-full object-cover object-center transition-all duration-[1400ms] ease-out ${
-            index === current
-              ? "scale-105 opacity-100"
-              : "scale-100 opacity-0"
-          }`}
+          src={sliderImage}
+          alt="Ramdev Udhyog and Hardware electrical and hardware products"
+          width="1920"
+          height="1080"
+          fetchPriority="high"
+          decoding="async"
+          className="absolute inset-0 h-full w-full max-w-none object-cover object-center"
         />
-      ))}
 
-      <div className="absolute inset-0 -z-20 bg-[#032e30]/55" />
+        <div className="absolute inset-0 bg-[#063f42]/75" />
 
-      <div className="absolute inset-0 -z-20 bg-gradient-to-r from-[#021f21]/95 via-[#063f42]/75 to-[#063f42]/10" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#032e30]/95 via-[#063f42]/80 to-[#063f42]/35" />
 
-      <div className="absolute inset-0 -z-20 bg-gradient-to-t from-[#021f21] via-transparent to-[#021f21]/20" />
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#032e30]/60 via-transparent to-transparent" />
 
-      <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_75%_45%,rgba(249,115,22,0.14),transparent_32%)]" />
-
-      <div className="mx-auto flex min-h-[620px] max-w-7xl items-center px-4 pb-24 pt-28 sm:min-h-screen sm:px-6 sm:pb-28 sm:pt-32 lg:px-8">
-        <div
-          key={current}
-          className="w-full max-w-3xl text-white"
-        >
+        <div className="relative z-10 mx-auto flex h-full w-full max-w-7xl items-center px-5 pb-16 pt-24 sm:px-6 lg:px-8">
           <div
-            data-aos="fade-down"
-            className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.16em] text-orange-400 sm:text-xs"
-          >
-            <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-orange-500/15">
-              <Icon size={15} />
-            </span>
-
-            <span>{slide.eyebrow}</span>
-          </div>
-
-          <h1
+            key={active}
             data-aos="fade-up"
-            data-aos-delay="100"
-            className="mt-5 text-[2.2rem] font-black leading-[1.04] tracking-tight sm:mt-6 sm:text-6xl lg:text-7xl xl:text-[78px]"
+            className="w-full max-w-3xl"
           >
-            {slide.title}
+            <div className="inline-flex max-w-full items-center gap-2 rounded-full border border-orange-400/20 bg-orange-500/10 px-3 py-2 text-[9px] font-black uppercase tracking-[0.14em] text-orange-300 backdrop-blur-sm sm:px-4 sm:text-[10px] sm:tracking-[0.18em]">
+              <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-orange-500/20">
+                <Icon size={15} />
+              </span>
 
-            <span className="block text-orange-400">
-              {slide.highlight}
-            </span>
-          </h1>
+              <span className="truncate">
+                {currentSlide.eyebrow}
+              </span>
+            </div>
 
-          <p
-            data-aos="fade-up"
-            data-aos-delay="200"
-            className="mt-5 max-w-2xl text-[13px] leading-6 text-slate-100 sm:text-base sm:leading-7 lg:text-lg"
-          >
-            {slide.description}
-          </p>
-        </div>
-      </div>
+            <h1 className="mt-6 max-w-3xl text-[42px] font-black leading-[0.98] tracking-tight text-white sm:text-6xl lg:text-7xl">
+              {currentSlide.title}
+              <span className="block text-orange-500">
+                {currentSlide.highlight}
+              </span>
+            </h1>
 
-      <div className="absolute bottom-7 left-0 right-0 z-10">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-          <button
-            type="button"
-            onClick={previousSlide}
-            aria-label="Previous slide"
-            className="grid h-9 w-9 place-items-center rounded-full border border-white/20 bg-black/20 text-white backdrop-blur-md transition-all duration-300 hover:border-orange-400 hover:bg-orange-500 sm:h-10 sm:w-10"
-          >
-            <ChevronLeft size={18} />
-          </button>
-
-          <div className="flex items-center gap-2">
-            {slides.map((_, index) => (
-              <button
-                key={index}
-                type="button"
-                onClick={() => setCurrent(index)}
-                aria-label={`Go to slide ${index + 1}`}
-                aria-current={
-                  current === index ? "true" : "false"
-                }
-                className={`h-1.5 rounded-full transition-all duration-500 ${
-                  current === index
-                    ? "w-8 bg-orange-500"
-                    : "w-1.5 bg-white/40 hover:bg-white"
-                }`}
-              />
-            ))}
+            <p className="mt-6 max-w-2xl text-sm font-medium leading-7 text-slate-200 sm:text-base sm:leading-8 lg:text-lg">
+              {currentSlide.text}
+            </p>
           </div>
-
-          <button
-            type="button"
-            onClick={nextSlide}
-            aria-label="Next slide"
-            className="grid h-9 w-9 place-items-center rounded-full border border-white/20 bg-black/20 text-white backdrop-blur-md transition-all duration-300 hover:border-orange-400 hover:bg-orange-500 sm:h-10 sm:w-10"
-          >
-            <ChevronRight size={18} />
-          </button>
         </div>
-      </div>
 
-      <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-[#063f42] to-transparent" />
+        <button
+          type="button"
+          onClick={previousSlide}
+          aria-label="Previous slide"
+          className="absolute bottom-7 left-5 z-20 grid h-11 w-11 place-items-center rounded-full border border-white/20 bg-black/10 text-white backdrop-blur-md transition hover:border-orange-400 hover:bg-orange-500 sm:left-6 lg:left-8"
+        >
+          <ArrowLeft size={20} />
+        </button>
+
+        <div className="absolute bottom-7 left-1/2 z-20 flex -translate-x-1/2 items-center gap-2">
+          {slides.map((_, index) => (
+            <button
+              key={index}
+              type="button"
+              onClick={() => setActive(index)}
+              aria-label={`Go to slide ${index + 1}`}
+              className={`h-2.5 rounded-full transition-all duration-300 ${
+                active === index
+                  ? "w-12 bg-orange-500"
+                  : "w-2.5 bg-white/40 hover:bg-white/70"
+              }`}
+            />
+          ))}
+        </div>
+
+        <button
+          type="button"
+          onClick={nextSlide}
+          aria-label="Next slide"
+          className="absolute bottom-7 right-5 z-20 grid h-11 w-11 place-items-center rounded-full border border-white/20 bg-black/10 text-white backdrop-blur-md transition hover:border-orange-400 hover:bg-orange-500 sm:right-6 lg:right-8"
+        >
+          <ArrowRight size={20} />
+        </button>
+      </div>
     </section>
   );
 }

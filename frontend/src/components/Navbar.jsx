@@ -6,6 +6,7 @@ import {
   Phone,
   MessageCircle,
 } from "lucide-react";
+
 import { site } from "../data/site";
 import logo from "../asserts/images/logos.jpeg";
 
@@ -25,14 +26,14 @@ export default function Navbar() {
     let ticking = false;
 
     const handleScroll = () => {
-      if (!ticking) {
-        window.requestAnimationFrame(() => {
-          setScrolled(window.scrollY > 50);
-          ticking = false;
-        });
+      if (ticking) return;
 
-        ticking = true;
-      }
+      window.requestAnimationFrame(() => {
+        setScrolled(window.scrollY > 50);
+        ticking = false;
+      });
+
+      ticking = true;
     };
 
     setScrolled(window.scrollY > 50);
@@ -47,12 +48,7 @@ export default function Navbar() {
   }, []);
 
   useEffect(() => {
-    if (!open) {
-      document.body.style.overflow = "";
-      return;
-    }
-
-    document.body.style.overflow = "hidden";
+    document.body.style.overflow = open ? "hidden" : "";
 
     return () => {
       document.body.style.overflow = "";
@@ -80,15 +76,15 @@ export default function Navbar() {
   return (
     <>
       <header
-        className={`fixed left-0 right-0 top-0 z-[1000] transition-[background-color,box-shadow] duration-300 ${
+        className={`fixed inset-x-0 top-0 z-[1000] w-full max-w-none transition-[background-color,box-shadow] duration-300 ${
           scrolled
             ? "bg-[#032e30]/95 shadow-lg backdrop-blur-md"
             : "bg-transparent"
         }`}
       >
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="w-full max-w-none">
           <div
-            className={`flex items-center justify-between transition-[height] duration-300 ${
+            className={`mx-auto flex w-full max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8 ${
               scrolled
                 ? "h-[68px]"
                 : "h-[76px] sm:h-[82px]"
@@ -97,7 +93,7 @@ export default function Navbar() {
             <Link
               to="/"
               onClick={closeMenu}
-              className="group flex items-center gap-3"
+              className="group flex shrink-0 items-center gap-3"
             >
               <div className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-white shadow-md transition-transform duration-200 group-hover:scale-105 sm:h-12 sm:w-12">
                 <img
@@ -151,7 +147,7 @@ export default function Navbar() {
               ))}
             </nav>
 
-            <div className="hidden items-center gap-2.5 md:flex">
+            <div className="hidden shrink-0 items-center gap-2.5 md:flex">
               <a
                 href={`tel:+${site.phoneRaw}`}
                 className="inline-flex items-center gap-2 rounded-lg border border-white/25 px-4 py-2.5 text-sm font-bold text-white transition duration-200 hover:border-orange-400 hover:bg-white/10 hover:text-orange-300"
@@ -176,7 +172,7 @@ export default function Navbar() {
               onClick={() => setOpen((value) => !value)}
               aria-label={open ? "Close menu" : "Open menu"}
               aria-expanded={open}
-              className="grid h-10 w-10 place-items-center rounded-lg border border-white/20 bg-black/10 text-white backdrop-blur-sm transition duration-200 hover:bg-white/10 md:hidden"
+              className="grid h-10 w-10 shrink-0 place-items-center rounded-lg border border-white/20 bg-black/10 text-white backdrop-blur-sm transition duration-200 hover:bg-white/10 md:hidden"
             >
               {open ? <X size={22} /> : <Menu size={22} />}
             </button>
@@ -184,13 +180,13 @@ export default function Navbar() {
         </div>
 
         <div
-          className={`overflow-hidden border-t border-white/10 bg-[#032e30]/98 backdrop-blur-xl transition-all duration-300 md:hidden ${
+          className={`w-full overflow-hidden border-t border-white/10 bg-[#032e30]/98 backdrop-blur-xl transition-all duration-300 md:hidden ${
             open
               ? "max-h-[500px] opacity-100"
               : "max-h-0 border-transparent opacity-0"
           }`}
         >
-          <div className="mx-auto max-w-7xl px-4 pb-5 pt-3 sm:px-6">
+          <div className="mx-auto w-full max-w-7xl px-4 pb-5 pt-3 sm:px-6">
             <nav className="flex flex-col">
               {links.map(([label, to]) => (
                 <NavLink

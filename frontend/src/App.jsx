@@ -16,7 +16,7 @@ const AdminProducts = lazy(() => import("./pages/AdminProducts"));
 
 function RouteLoader() {
   return (
-    <div className="flex min-h-[60vh] items-center justify-center">
+    <div className="flex min-h-[60vh] w-full items-center justify-center">
       <PageLoader />
     </div>
   );
@@ -24,12 +24,12 @@ function RouteLoader() {
 
 export default function App() {
   return (
-    <>
+    <div className="min-h-screen w-full max-w-full overflow-x-hidden">
       <ScrollToTop />
 
       <Navbar />
 
-      <main className="min-h-[60vh]">
+      <main className="min-h-[60vh] w-full max-w-full overflow-x-hidden">
         <Suspense fallback={<RouteLoader />}>
           <Routes>
             <Route path="/" element={<Home />} />
@@ -55,6 +55,6 @@ export default function App() {
       <Footer />
 
       <FloatingWhatsApp />
-    </>
+    </div>
   );
 }
