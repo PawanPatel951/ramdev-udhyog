@@ -22,12 +22,24 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
+    let ticking = false;
+
     const handleScroll = () => {
-      setScrolled(window.scrollY > 50);
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          setScrolled(window.scrollY > 50);
+          ticking = false;
+        });
+
+        ticking = true;
+      }
     };
 
-    handleScroll();
-    window.addEventListener("scroll", handleScroll);
+    setScrolled(window.scrollY > 50);
+
+    window.addEventListener("scroll", handleScroll, {
+      passive: true,
+    });
 
     return () => {
       window.removeEventListener("scroll", handleScroll);
@@ -35,7 +47,12 @@ export default function Navbar() {
   }, []);
 
   useEffect(() => {
-    document.body.style.overflow = open ? "hidden" : "";
+    if (!open) {
+      document.body.style.overflow = "";
+      return;
+    }
+
+    document.body.style.overflow = "hidden";
 
     return () => {
       document.body.style.overflow = "";
@@ -63,8 +80,7 @@ export default function Navbar() {
   return (
     <>
       <header
-        data-aos="fade-down"
-        className={`fixed left-0 right-0 top-0 z-[1000] transition-all duration-500 ${
+        className={`fixed left-0 right-0 top-0 z-[1000] transition-[background-color,box-shadow] duration-300 ${
           scrolled
             ? "bg-[#032e30]/95 shadow-lg backdrop-blur-md"
             : "bg-transparent"
@@ -72,7 +88,7 @@ export default function Navbar() {
       >
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div
-            className={`flex items-center justify-between transition-all duration-500 ${
+            className={`flex items-center justify-between transition-[height] duration-300 ${
               scrolled
                 ? "h-[68px]"
                 : "h-[76px] sm:h-[82px]"
@@ -83,10 +99,14 @@ export default function Navbar() {
               onClick={closeMenu}
               className="group flex items-center gap-3"
             >
-              <div className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-white shadow-md transition duration-300 group-hover:scale-105 sm:h-12 sm:w-12">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-white shadow-md transition-transform duration-200 group-hover:scale-105 sm:h-12 sm:w-12">
                 <img
                   src={logo}
                   alt="Ramdev Udhyog & Hardware"
+                  width="48"
+                  height="48"
+                  fetchPriority="high"
+                  decoding="async"
                   className="h-full w-full object-contain"
                 />
               </div>
@@ -109,7 +129,7 @@ export default function Navbar() {
                   to={to}
                   end={to === "/"}
                   className={({ isActive }) =>
-                    `relative py-2 text-[14px] font-bold transition-colors duration-300 ${
+                    `relative py-2 text-[14px] font-bold transition-colors duration-200 ${
                       isActive
                         ? "text-orange-400"
                         : "text-white hover:text-orange-300"
@@ -121,7 +141,7 @@ export default function Navbar() {
                       {label}
 
                       <span
-                        className={`absolute -bottom-0.5 left-0 h-[2px] rounded-full bg-orange-500 transition-all duration-300 ${
+                        className={`absolute -bottom-0.5 left-0 h-[2px] rounded-full bg-orange-500 transition-all duration-200 ${
                           isActive ? "w-full" : "w-0"
                         }`}
                       />
@@ -134,7 +154,7 @@ export default function Navbar() {
             <div className="hidden items-center gap-2.5 md:flex">
               <a
                 href={`tel:+${site.phoneRaw}`}
-                className="inline-flex items-center gap-2 rounded-lg border border-white/25 px-4 py-2.5 text-sm font-bold text-white transition duration-300 hover:border-orange-400 hover:bg-white/10 hover:text-orange-300"
+                className="inline-flex items-center gap-2 rounded-lg border border-white/25 px-4 py-2.5 text-sm font-bold text-white transition duration-200 hover:border-orange-400 hover:bg-white/10 hover:text-orange-300"
               >
                 <Phone size={16} />
                 Call Now
@@ -144,7 +164,7 @@ export default function Navbar() {
                 href={`https://wa.me/${site.phoneRaw}`}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center gap-2 rounded-lg bg-orange-500 px-4 py-2.5 text-sm font-bold text-white shadow-md transition duration-300 hover:bg-orange-600"
+                className="inline-flex items-center gap-2 rounded-lg bg-orange-500 px-4 py-2.5 text-sm font-bold text-white shadow-md transition duration-200 hover:bg-orange-600"
               >
                 <MessageCircle size={16} />
                 WhatsApp
@@ -156,7 +176,7 @@ export default function Navbar() {
               onClick={() => setOpen((value) => !value)}
               aria-label={open ? "Close menu" : "Open menu"}
               aria-expanded={open}
-              className="grid h-10 w-10 place-items-center rounded-lg border border-white/20 bg-black/10 text-white backdrop-blur-sm transition hover:bg-white/10 md:hidden"
+              className="grid h-10 w-10 place-items-center rounded-lg border border-white/20 bg-black/10 text-white backdrop-blur-sm transition duration-200 hover:bg-white/10 md:hidden"
             >
               {open ? <X size={22} /> : <Menu size={22} />}
             </button>
