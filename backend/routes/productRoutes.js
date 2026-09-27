@@ -10,19 +10,40 @@ const {
 
 const router = express.Router();
 
-// GET all products
+// =====================================================
+// PUBLIC PRODUCTS
+// GET /api/products/public
+// =====================================================
+router.get("/public", getProducts);
+
+// =====================================================
+// ALL PRODUCTS
+// GET /api/products
+// =====================================================
 router.get("/", getProducts);
 
-// GET single product
+// =====================================================
+// SINGLE PRODUCT
+// GET /api/products/:id
+// =====================================================
 router.get("/:id", getProductById);
 
-// CREATE product
+// =====================================================
+// CREATE PRODUCT
+// POST /api/products
+// =====================================================
 router.post("/", createProduct);
 
-// UPDATE product
+// =====================================================
+// UPDATE PRODUCT
+// PUT /api/products/:id
+// =====================================================
 router.put("/:id", updateProduct);
 
-// DELETE product
+// =====================================================
+// DELETE PRODUCT
+// DELETE /api/products/:id
+// =====================================================
 router.delete("/:id", deleteProduct);
 
 module.exports = router;

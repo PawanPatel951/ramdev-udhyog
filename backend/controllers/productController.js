@@ -6,11 +6,17 @@ const Product = require("../models/Product");
 // =====================================================
 const getProducts = async (req, res) => {
   try {
+    console.log("========================================");
+    console.log("GET PRODUCTS REQUEST");
+    console.log("========================================");
+
     const products = await Product.find({
       isActive: true,
     }).sort({
       createdAt: -1,
     });
+
+    console.log("Products found:", products.length);
 
     res.status(200).json({
       success: true,
@@ -18,11 +24,15 @@ const getProducts = async (req, res) => {
       products,
     });
   } catch (error) {
-    console.error("Get Products Error:", error);
+    console.error("========================================");
+    console.error("GET PRODUCTS ERROR");
+    console.error(error);
+    console.error("========================================");
 
     res.status(500).json({
       success: false,
       message: "Failed to fetch products",
+      error: error.message,
     });
   }
 };
@@ -52,6 +62,7 @@ const getProductById = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Failed to fetch product",
+      error: error.message,
     });
   }
 };
@@ -96,7 +107,7 @@ const createProduct = async (req, res) => {
       image,
       images,
       unit,
-      isActive,
+      isActive: isActive !== false,
     });
 
     res.status(201).json({
@@ -159,9 +170,7 @@ const updateProduct = async (req, res) => {
 // =====================================================
 const deleteProduct = async (req, res) => {
   try {
-    const product = await Product.findByIdAndDelete(
-      req.params.id
-    );
+    const product = await Product.findByIdAndDelete(req.params.id);
 
     if (!product) {
       return res.status(404).json({
@@ -180,6 +189,7 @@ const deleteProduct = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Failed to delete product",
+      error: error.message,
     });
   }
 };
