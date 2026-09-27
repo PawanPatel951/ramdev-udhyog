@@ -12,6 +12,7 @@
     "@tailwindcss/vite": "^4.3.3",
     "aos": "^2.3.4",
     "axios": "^1.12.2",
+    "compression": "^1.8.2",
     "lucide-react": "^0.468.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",

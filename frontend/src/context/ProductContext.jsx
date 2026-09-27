@@ -1,8 +1,10 @@
 import React, {
   createContext,
+  useCallback,
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from "react";
 
@@ -29,118 +31,265 @@ const getApiBaseUrl = () => {
 
 const API_URL = `${getApiBaseUrl()}/products/public`;
 
+const CACHE_KEY = "ramdev_products_cache";
+const CACHE_TIME = 5 * 60 * 1000;
+
+const getCachedProducts = () => {
+  try {
+    const cached = localStorage.getItem(CACHE_KEY);
+
+    if (!cached) {
+      return null;
+    }
+
+    const parsed = JSON.parse(cached);
+
+    if (
+      !parsed ||
+      !Array.isArray(parsed.products) ||
+      !parsed.timestamp
+    ) {
+      return null;
+    }
+
+    return parsed;
+  } catch {
+    return null;
+  }
+};
+
+const saveCachedProducts = (products) => {
+  try {
+    localStorage.setItem(
+      CACHE_KEY,
+      JSON.stringify({
+        products,
+        timestamp: Date.now(),
+      })
+    );
+  } catch {
+    // Ignore localStorage errors
+  }
+};
+
+const formatProducts = (products = []) => {
+  return products.map((product) => ({
+    id: product._id,
+
+    name: product.name || "Product",
+
+    description:
+      product.description ||
+      "Quality electrical and hardware product.",
+
+    category:
+      product.category || "Hardware Items",
+
+    sku: product.sku || "—",
+
+    brand:
+      product.brand || "Genuine Brand",
+
+    price: Number(product.price) || 0,
+
+    mrp: Number(product.mrp) || 0,
+
+    stock: Number(product.stock) || 0,
+
+    image: product.image || "",
+
+    images: Array.isArray(product.images)
+      ? product.images
+      : [],
+
+    unit: product.unit || "Piece",
+
+    isActive:
+      product.isActive !== false,
+
+    _id: product._id,
+
+    createdAt: product.createdAt,
+
+    updatedAt: product.updatedAt,
+  }));
+};
+
 export function ProductProvider({ children }) {
-  const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const cached = useMemo(
+    () => getCachedProducts(),
+    []
+  );
+
+  const [products, setProducts] = useState(
+    cached?.products
+      ? formatProducts(cached.products)
+      : []
+  );
+
+  const [loading, setLoading] = useState(
+    !cached?.products
+  );
+
   const [error, setError] = useState("");
 
-  const loadProducts = async () => {
-    try {
-      setLoading(true);
-      setError("");
+  const requestRef = useRef(null);
 
-      console.log("PRODUCT API:", API_URL);
-
-      const response = await fetch(API_URL);
-
-      if (!response.ok) {
-        throw new Error(
-          `Products API request failed: ${response.status}`
-        );
+  const loadProducts = useCallback(
+    async (force = false) => {
+      if (requestRef.current) {
+        return requestRef.current;
       }
 
-      const data = await response.json();
+      const cachedData = getCachedProducts();
 
-      console.log("PRODUCT API RESPONSE:", data);
+      if (
+        !force &&
+        cachedData?.products &&
+        Date.now() - cachedData.timestamp <
+          CACHE_TIME
+      ) {
+        const formatted =
+          formatProducts(
+            cachedData.products
+          );
 
-      if (!data.success) {
-        throw new Error(
-          data.message || "Failed to load products"
-        );
+        setProducts(formatted);
+        setLoading(false);
+
+        return formatted;
       }
 
-      const formattedProducts = (
-        data.products || []
-      ).map((product) => ({
-        id: product._id,
+      const controller =
+        new AbortController();
 
-        name: product.name || "Product",
+      const timeout = window.setTimeout(() => {
+        controller.abort();
+      }, 15000);
 
-        description:
-          product.description ||
-          "Quality electrical and hardware product.",
+      requestRef.current = (async () => {
+        try {
+          setError("");
 
-        category:
-          product.category || "Hardware Items",
+          if (products.length === 0) {
+            setLoading(true);
+          }
 
-        sku: product.sku || "—",
+          const response = await fetch(
+            API_URL,
+            {
+              method: "GET",
+              signal: controller.signal,
+              headers: {
+                Accept:
+                  "application/json",
+              },
+            }
+          );
 
-        brand:
-          product.brand || "Genuine Brand",
+          if (!response.ok) {
+            throw new Error(
+              `Products API request failed: ${response.status}`
+            );
+          }
 
-        price: Number(product.price) || 0,
+          const data =
+            await response.json();
 
-        mrp: Number(product.mrp) || 0,
+          if (!data.success) {
+            throw new Error(
+              data.message ||
+                "Failed to load products"
+            );
+          }
 
-        stock: Number(product.stock) || 0,
+          const rawProducts =
+            data.products || [];
 
-        image: product.image || "",
+          const formatted =
+            formatProducts(
+              rawProducts
+            );
 
-        images: Array.isArray(product.images)
-          ? product.images
-          : [],
+          setProducts(formatted);
 
-        unit: product.unit || "Piece",
+          saveCachedProducts(
+            rawProducts
+          );
 
-        isActive:
-          product.isActive !== false,
+          return formatted;
+        } catch (err) {
+          if (
+            err.name === "AbortError"
+          ) {
+            setError(
+              "Products are taking longer than expected."
+            );
+          } else {
+            console.error(
+              "Product API Error:",
+              err
+            );
 
-        _id: product._id,
+            setError(
+              err.message ||
+                "Products could not be loaded."
+            );
+          }
 
-        createdAt: product.createdAt,
+          if (products.length === 0) {
+            setProducts([]);
+          }
 
-        updatedAt: product.updatedAt,
-      }));
+          return [];
+        } finally {
+          window.clearTimeout(timeout);
+          setLoading(false);
+          requestRef.current = null;
+        }
+      })();
 
-      setProducts(formattedProducts);
-    } catch (err) {
-      console.error("Product API Error:", err);
-
-      setProducts([]);
-
-      setError(
-        err.message ||
-          "Products could not be loaded."
-      );
-    } finally {
-      setLoading(false);
-    }
-  };
+      return requestRef.current;
+    },
+    [products.length]
+  );
 
   useEffect(() => {
     loadProducts();
-  }, []);
+  }, [loadProducts]);
 
   const categories = useMemo(() => {
     return [
       ...new Set(
         products
-          .map((product) => product?.category)
+          .map(
+            (product) =>
+              product?.category
+          )
           .filter(Boolean)
       ),
     ];
   }, [products]);
 
+  const value = useMemo(
+    () => ({
+      products,
+      loading,
+      error,
+      reload: () => loadProducts(true),
+      categories,
+    }),
+    [
+      products,
+      loading,
+      error,
+      loadProducts,
+      categories,
+    ]
+  );
+
   return (
-    <ProductContext.Provider
-      value={{
-        products,
-        loading,
-        error,
-        reload: loadProducts,
-        categories,
-      }}
-    >
+    <ProductContext.Provider value={value}>
       {children}
     </ProductContext.Provider>
   );

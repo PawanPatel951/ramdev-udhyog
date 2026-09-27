@@ -77,4 +77,17 @@ const productSchema = new mongoose.Schema(
   }
 );
 
-module.exports = mongoose.model("Product", productSchema);
+// =====================================================
+// PERFORMANCE INDEX
+// Used by public product listing:
+// isActive: true + newest products first
+// =====================================================
+productSchema.index({
+  isActive: 1,
+  createdAt: -1,
+});
+
+module.exports = mongoose.model(
+  "Product",
+  productSchema
+);
