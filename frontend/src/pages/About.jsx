@@ -25,7 +25,7 @@ export default function About() {
             className="relative overflow-hidden rounded-[28px] bg-slate-100 shadow-2xl"
           >
             <img
-              src="/hero-banner.png"
+              src="../src/asserts/images/fan.jpg"
               alt="Ramdev Udhyog and Hardware"
               className="h-full min-h-[320px] w-full object-cover"
             />
