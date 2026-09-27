@@ -7,6 +7,7 @@ import {
   MessageCircle,
 } from "lucide-react";
 import { site } from "../data/site";
+import logo from "../asserts/images/logos.jpeg";
 
 const links = [
   ["Home", "/"],
@@ -26,7 +27,6 @@ export default function Navbar() {
     };
 
     handleScroll();
-
     window.addEventListener("scroll", handleScroll);
 
     return () => {
@@ -72,22 +72,23 @@ export default function Navbar() {
       >
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div
-            className={`flex h-[76px] items-center justify-between transition-all duration-500 ${
+            className={`flex items-center justify-between transition-all duration-500 ${
               scrolled
                 ? "h-[68px]"
                 : "h-[76px] sm:h-[82px]"
             }`}
           >
-            {/* Logo */}
             <Link
               to="/"
               onClick={closeMenu}
               className="group flex items-center gap-3"
             >
-              <div className="grid h-11 w-11 shrink-0 place-items-center rounded-lg bg-orange-500 shadow-md transition duration-300 group-hover:bg-orange-600 sm:h-12 sm:w-12">
-                <span className="text-xl font-black text-white sm:text-2xl">
-                  R
-                </span>
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-white shadow-md transition duration-300 group-hover:scale-105 sm:h-12 sm:w-12">
+                <img
+                  src={logo}
+                  alt="Ramdev Udhyog & Hardware"
+                  className="h-full w-full object-contain"
+                />
               </div>
 
               <div className="leading-none">
@@ -101,7 +102,6 @@ export default function Navbar() {
               </div>
             </Link>
 
-            {/* Desktop Navigation */}
             <nav className="hidden items-center gap-7 md:flex lg:gap-9">
               {links.map(([label, to]) => (
                 <NavLink
@@ -122,9 +122,7 @@ export default function Navbar() {
 
                       <span
                         className={`absolute -bottom-0.5 left-0 h-[2px] rounded-full bg-orange-500 transition-all duration-300 ${
-                          isActive
-                            ? "w-full"
-                            : "w-0"
+                          isActive ? "w-full" : "w-0"
                         }`}
                       />
                     </>
@@ -133,7 +131,6 @@ export default function Navbar() {
               ))}
             </nav>
 
-            {/* Desktop Actions */}
             <div className="hidden items-center gap-2.5 md:flex">
               <a
                 href={`tel:+${site.phoneRaw}`}
@@ -154,7 +151,6 @@ export default function Navbar() {
               </a>
             </div>
 
-            {/* Mobile Menu Button */}
             <button
               type="button"
               onClick={() => setOpen((value) => !value)}
@@ -167,7 +163,6 @@ export default function Navbar() {
           </div>
         </div>
 
-        {/* Mobile Menu */}
         <div
           className={`overflow-hidden border-t border-white/10 bg-[#032e30]/98 backdrop-blur-xl transition-all duration-300 md:hidden ${
             open
@@ -221,7 +216,6 @@ export default function Navbar() {
         </div>
       </header>
 
-      {/* Mobile Overlay */}
       {open && (
         <button
           type="button"
